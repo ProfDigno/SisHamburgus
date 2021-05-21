@@ -1,0 +1,13 @@
+    public void imprimir_factura(Connection conn, int idfactura) {
+        String sql = "select f.idfactura as idfactura,f.nro_factura as nro,('CONTADO') as condicion,"
+                + "to_char(f.fecha_emision,'yyyy-MM-dd') as emision,('-') as venci,"
+                + "f.totalletra as ttletra,f.totalmonto as ttpagar,(0) as ttiva5,"
+                + "f.iva as ttiva10,f.iva as ttiva,cl.ruc as ruc,"
+                + "(cl.idcliente||'-'||cl.nombre) as cliente,"
+                + "cl.telefono as telef,cl.direccion as direc\n"
+                + "from factura f,factura_fila ff, cliente cl\n"
+                + "where f.fk_idcliente=cl.idcliente and f.idfactura=" + idfactura;
+        String titulonota = "FACTURA";
+        String direccion = "src/REPORTE/FACTURA/repNotaFactura.jrxml";
+        rep.imprimirjasper(conn, sql, titulonota, direccion);
+    }

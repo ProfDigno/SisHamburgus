@@ -1,0 +1,11 @@
+{
+"nom_sistema":"HAMBURGUS",
+"tel_sistema":"TEL: ",
+"dir_sistema":"DIR: ",
+"fecha_sis":"13-04-2021",
+"tiempo_max_emitido":"60",
+"version":"2.9",
+"user_admin":"5",
+"pass_admin":"3",
+"venta_negativo":false
+}

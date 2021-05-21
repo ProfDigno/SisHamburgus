@@ -1,0 +1,21 @@
+                                        
+   =========HAMBURGUS=========          
+   #>DELIVERY<#                         
+   USUARIO:DIGNO ALFREDO                
+   VENTA:374   FEC:2021-04-28 17:45     
+   CLI: 31-Ana Beatriz Alves            
+   DIR: km 7                            
+   #=============================#      
+                                        
+     1 X    (SIMPLE)-CLASICA            
+     1 X    (DOBLE)-CLASICA             
+     1 X    ##DESCONTAR:                
+                                        
+   #=============================#      
+   PAGO: EFECTIVO                       
+   OBS: Ninguna                         
+                                        
+                                        
+                                        
+                                        
+                                        

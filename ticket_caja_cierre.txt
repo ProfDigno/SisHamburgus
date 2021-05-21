@@ -1,0 +1,55 @@
+                                        
+   =========HAMBURGUS=========          
+          CODIGO:42                     
+   INICIO:     2021-05-16 17:45         
+   FIN:        2021-05-16 22:27         
+   USUARIO:samu                         
+   #=============================#      
+   CAJA ABRIR:           870,000        
+   TOTAL VENTA:          2,590,000      
+   ------Detalle Venta-----------       
+   COMIDA:               2,358,000      
+   BEBIDA:               42,000         
+   DELIVERY:             190,000        
+   #=============================#      
+   TOTAL GASTO:          0              
+   TOTAL VALE:           0              
+   TOTAL COMPRA:         0              
+   #=============================#      
+   SIS. TOTAL:           3,460,000      
+   SIS. SIN DELIVERY:    3,270,000      
+   CIERRE:               3,270,000      
+   DIFERENCIA:           (0)            
+   ------Venta Por Categoria-------     
+     31 X   HAMBURGUESA                 
+     27 X   PIZZA-TATA                  
+     15 X   PIZZA-HORNO                 
+     11 X   PAPAS                       
+     10 X   EXTRAS                      
+     7 X    GASEOSA                     
+                                        
+   ------TOP 15 Mas Vendido-----        
+     13 X   BUR-CLASICA                 
+     11 X   BUR-BACON                   
+     10 X   UNI-PANCETA                 
+     6 X    INDIVIDUAL-COMBO            
+     6 X    BUR-CHIMICHURRI             
+     6 X    LATA-COCA                   
+     5 X    INDIVIDUAL-PAPAS            
+     4 X    HOR-ENTE-CALABRESA          
+     4 X    (TATA-Mitad)-PANCETA        
+     4 X    (TATA-Mitad)-POLLO          
+     4 X    (TATA-Mitad)-CHEESE         
+     4 X    HOR-ENTE-PANCETA            
+     3 X    (TATA-Mitad)-SHITAKE        
+     2 X    TATA-ENTE-MARGARITA         
+     2 X    TATA-ENTE-PANCETA           
+                                        
+   ------ANULADOS-----                  
+     idv:856 monto:      74,000         
+     idv:858 monto:      125,000        
+     idv:864 monto:      60,000         
+     idv:887 monto:      50,000         
+                                        
+                                        
+                                        
