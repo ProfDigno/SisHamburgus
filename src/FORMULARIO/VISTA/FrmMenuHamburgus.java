@@ -83,7 +83,7 @@ public class FrmMenuHamburgus extends javax.swing.JFrame {
         iniciarTiempo();
         habilitar_menu(false);
         codao.cargar_cotizacion(coti, 1);
-        corte.setFecha_corte("2021-06-01");
+        corte.setFecha_corte("2021-12-30");
         txtvercion.setText("V:" + jsconfig.getVersion());
         jFdolar.setValue(coti.getDolar_guarani());
         jFreal.setValue(coti.getReal_guarani());
