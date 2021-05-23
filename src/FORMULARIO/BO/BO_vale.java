@@ -25,7 +25,7 @@ public class BO_vale {
     private DAO_caja_detalle cdao = new DAO_caja_detalle();
     EvenMensajeJoptionpane evmen = new EvenMensajeJoptionpane();
 
-    public boolean getboolean_insertar_vale(vale vale, caja_detalle caja) {
+    public boolean getboolean_insertar_vale1(vale vale, caja_detalle caja) {
         String titulo = "insertar_vale";
         Connection conn = ConnPostgres.getConnPosgres();
         try {
@@ -33,7 +33,7 @@ public class BO_vale {
                 conn.setAutoCommit(false);
             }
             vdao.insertar_vale(conn, vale);
-            cdao.insertar_caja_detalle(conn, caja);
+            cdao.insertar_caja_detalle1(conn, caja);
             conn.commit();
             return true;
         } catch (SQLException e) {
@@ -69,7 +69,7 @@ public class BO_vale {
         }
     }
 
-    public void update_vale_anular(vale vale, caja_detalle caja) {
+    public void update_vale_anular1(vale vale, caja_detalle caja) {
         if (evmen.MensajeGeneral_warning("ESTAS SEGURO DE ANULAR EL VALE", "ANULAR", "ANULAR", "CANCELAR")) {
             String titulo = "update_vale";
             Connection conn = ConnPostgres.getConnPosgres();
@@ -77,8 +77,8 @@ public class BO_vale {
                 if (conn.getAutoCommit()) {
                     conn.setAutoCommit(false);
                 }
-                vdao.update_vale_anular(conn, vale);
-                cdao.anular_caja_detalle(conn, caja);
+                vdao.update_vale_anular1(conn, vale);
+                cdao.anular_caja_detalle1(conn, caja);
                 conn.commit();
             } catch (SQLException e) {
                 evmen.mensaje_error(e, vale.toString(), titulo);

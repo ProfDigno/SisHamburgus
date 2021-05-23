@@ -60,7 +60,7 @@ public class BO_compra_insumo {
         return insertado;
     }
 
-    public boolean getBoolean_update_estado_compra_insumo(compra_insumo comp, caja_detalle caja,boolean anularcaja) {
+    public boolean getBoolean_update_estado_compra_insumo1(compra_insumo comp, caja_detalle caja,boolean anularcaja) {
         boolean anulado = false;
 //        if (evmen.MensajeGeneral_warning("ESTAS SEGURO DE ANULAR ESTA COMPRA", "ANULAR", "ACEPTAR", "CANCELAR")) {
             String titulo = "getBoolean_update_anular_compra_insumo";
@@ -72,7 +72,7 @@ public class BO_compra_insumo {
                 }
                 vdao.update_estado_compra_insumo(conn, comp);
                 if(anularcaja){
-                cdao.anular_caja_detalle(conn, caja);
+                cdao.anular_caja_detalle1(conn, caja);
                 }
                 conn.commit();
                 anulado = true;

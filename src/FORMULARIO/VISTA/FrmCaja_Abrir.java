@@ -58,7 +58,7 @@ public class FrmCaja_Abrir extends javax.swing.JInternalFrame {
     void cargar_datos_caja() {
         caja.setC2fecha_emision(evefec.getString_formato_fecha_hora());
         caja.setC3descripcion("(VENTA) CAJA ABRIR:" );
-        caja.setC4monto_venta(0);
+        caja.setC4monto_venta_efectivo(0);
         caja.setC5monto_delivery(0);
         caja.setC6monto_gasto(0);
         caja.setC7monto_compra(0);
@@ -70,12 +70,14 @@ public class FrmCaja_Abrir extends javax.swing.JInternalFrame {
         caja.setC13equipo1(evepc.getString_nombre_pc());
         caja.setC15monto_caja1(evejtf.getDouble_format_nro_entero1(txtmonto_caja_abrir));
         caja.setC16monto_cierre(0);
+        caja.setC17estado("EMITIDO");
+        caja.setC18monto_venta_tarjeta(0);
     }
     void boton_caja_cierre(){
         if(txtmonto_caja_abrir.getText().trim().length()>0){
             cargar_datos_caja();
             cargar_datos_caja_cierre();
-            bocjcie.insertar_caja_cierre(cjcie, caja);
+            bocjcie.insertar_caja_cierre1(cjcie, caja);
             this.dispose();
         }
     }

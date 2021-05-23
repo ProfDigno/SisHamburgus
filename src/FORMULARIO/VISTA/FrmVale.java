@@ -128,7 +128,7 @@ public class FrmVale extends javax.swing.JInternalFrame {
     void cargar_datos_caja() {
         caja.setC2fecha_emision(txtfecha_emision.getText());
         caja.setC3descripcion("(VALE) id:" + idvale + " Funcionario:" + txtbuscar_cliente.getText());
-        caja.setC4monto_venta(0);
+        caja.setC4monto_venta_efectivo(0);
         caja.setC5monto_delivery(0);
         caja.setC6monto_gasto(0);
         caja.setC7monto_compra(0);
@@ -140,6 +140,8 @@ public class FrmVale extends javax.swing.JInternalFrame {
         caja.setC13equipo1(evepc.getString_nombre_pc());
         caja.setC15monto_caja1(0);
         caja.setC16monto_cierre(0);
+        caja.setC17estado("EMITIDO");
+        caja.setC18monto_venta_tarjeta(0);
     }
 
     void cargar_datos_vale() {
@@ -157,7 +159,7 @@ public class FrmVale extends javax.swing.JInternalFrame {
         if (validar_guardar()) {
             cargar_datos_vale();
             cargar_datos_caja();
-            if (vBO.getboolean_insertar_vale(val, caja)) {
+            if (vBO.getboolean_insertar_vale1(val, caja)) {
                 posval.boton_imprimir_pos_VALE(conn, idvale);
                 reestableser();
 
@@ -168,7 +170,7 @@ public class FrmVale extends javax.swing.JInternalFrame {
     void cargar_datos_editar_caja() {
         caja.setC2fecha_emision(txtfecha_emision.getText());
         caja.setC3descripcion("(VALE) id:" + idvale + " Funcionario:" + txtbuscar_cliente.getText());
-        caja.setC4monto_venta(0);
+        caja.setC4monto_venta_efectivo(0);
         caja.setC5monto_delivery(0);
         caja.setC6monto_gasto(0);
         caja.setC7monto_compra(0);
@@ -203,11 +205,9 @@ public class FrmVale extends javax.swing.JInternalFrame {
         if (!evejta.getBoolean_validar_select(tblvale)) {
             val.setEstado("ANULADO");
             val.setIdvale(idvale);
-            val.setIndice(indice);
             caja.setC9id_origen(idvale);
             caja.setC10tabla_origen("VALE");
-            caja.setC12indice(indice);
-            vBO.update_vale_anular(val, caja);
+            vBO.update_vale_anular1(val, caja);
             reestableser();
         }
     }

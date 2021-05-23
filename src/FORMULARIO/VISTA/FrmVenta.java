@@ -131,7 +131,7 @@ public class FrmVenta extends javax.swing.JInternalFrame {
     private String entrega_funcio = "##>>FUNCIONARIO<<##";
     boolean esBoton_comer_aca = false;
     boolean esBoton_buscar_pedido = false;
-    private String estado = "EMITIDO";
+    private String estado_venta = "EMITIDO";
     private int idventa_ultimo;
     private String indice_venta;
     private int fk_idcliente_local;
@@ -154,6 +154,9 @@ public class FrmVenta extends javax.swing.JInternalFrame {
     private String pago_efectivo="EFECTIVO";
     private String pago_tarjeta="TARJETA";
     private String forma_pago;
+    private String tabla_origen;
+    private double monto_venta_efectivo;
+    private double monto_venta_tarjeta;
 
     void abrir_formulario() {
         String servidor = "";
@@ -893,14 +896,20 @@ public class FrmVenta extends javax.swing.JInternalFrame {
         }
         if(jRpago_efectivo.isSelected()){
             forma_pago=pago_efectivo;
+            tabla_origen="VENTA_EFECTIVO";
+            monto_venta_efectivo=monto_venta;
+            monto_venta_tarjeta=0;
         }
         if(jRpago_tarjeta.isSelected()){
             forma_pago=pago_tarjeta;
+            tabla_origen="VENTA_TARJETA";
+            monto_venta_efectivo=0;
+            monto_venta_tarjeta=monto_venta;
         }
         ven.setC2fecha_inicio("now");//falta hora
         ven.setC3fecha_fin("now");
         ven.setC4tipo_entrega(tipo_entrega);
-        ven.setC5estado(estado);
+        ven.setC5estado(estado_venta);
         ven.setC6monto_venta(monto_venta);
         ven.setC7monto_delivery(monto_delivery);
         ven.setC8delivery(delivery);
@@ -920,18 +929,20 @@ public class FrmVenta extends javax.swing.JInternalFrame {
     void cargar_datos_caja() {
         caja.setC2fecha_emision(evefec.getString_formato_fecha_hora());
         caja.setC3descripcion("(VENTA) " + nombre_mesa + " id:" + idventa_ultimo + " Cli:" + txtbucarCliente_nombre.getText());
-        caja.setC4monto_venta(monto_venta);
+        caja.setC4monto_venta_efectivo(monto_venta_efectivo);
         caja.setC5monto_delivery(monto_delivery);
         caja.setC6monto_gasto(0);
         caja.setC7monto_compra(0);
         caja.setC8monto_vale(0);
         caja.setC9id_origen(idventa_ultimo);
-        caja.setC10tabla_origen("VENTA");
+        caja.setC10tabla_origen(tabla_origen);
         caja.setC11fk_idusuario(usu.getGlobal_idusuario());
         caja.setC12indice(indice_venta);
         caja.setC13equipo1(evepc.getString_nombre_pc());
         caja.setC15monto_caja1(0);
         caja.setC16monto_cierre(0);
+        caja.setC17estado(estado_venta);
+        caja.setC18monto_venta_tarjeta(monto_venta_tarjeta);
     }
 
     void cargar_datos_venta_por_mesa() {
@@ -956,7 +967,7 @@ public class FrmVenta extends javax.swing.JInternalFrame {
             cargar_datos_caja();
             esMesa_LIBRE = verificar_venta_mesa_es_LIBRE(idventa_mesa_select);
             cargar_datos_venta_por_mesa();
-            if (vBO.getBoolean_insertar_venta(connLocal, tblitem_producto, item, ven, caja, isCargar_venta_mesa, esMesa_LIBRE,
+            if (vBO.getBoolean_insertar_venta1(connLocal, tblitem_producto, item, ven, caja, isCargar_venta_mesa, esMesa_LIBRE,
                     ivmesa, ivmv, vmesa, iteminsu, idventa_ultimo, idventa_mesa_select)) {
                 if (jCvuelto.isSelected()) {
                     FrmVuelto vuel = new FrmVuelto(null, true);
@@ -1093,11 +1104,13 @@ public class FrmVenta extends javax.swing.JInternalFrame {
     void boton_estado_venta_anular() {
         if (!evejt.getBoolean_validar_select(tblventa)) {
             if (evemen.MensajeGeneral_warning("ESTAS SEGURO DE ANULAR LA VENTA", "ANULAR", "ANULAR", "CANCELAR")) {
-                String indice = evejt.getString_select(tblventa, 1);
+                int idventa=evejt.getInt_select_id(tblventa);
+                String pago=evejt.getString_select(tblventa,9);
                 ven.setC5estado("ANULADO_temp");
-                ven.setC15indice(indice);
-                caja.setC12indice(indice);
-                vBO.update_anular_venta(connLocal, ven, caja);
+                ven.setC1idventa(idventa);
+                caja.setC10tabla_origen("VENTA_"+pago);//VENTA_EFECTIVO Y VENTA_TARJETA
+                caja.setC9id_origen(idventa);
+                vBO.update_anular_venta1(connLocal, ven, caja);
                 actualizar_venta(3);
                 actualizar_todos_venta_mesa();
                 cargar_botones_mesa();

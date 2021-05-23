@@ -112,13 +112,13 @@ public class PosImprimir_Venta {
         mensaje_impresora = mensaje_impresora + "===============" + config.getNombre_sistema() + "================" + saltolinea;
         mensaje_impresora = mensaje_impresora + config.getTel_sistema() +  saltolinea;
         mensaje_impresora = mensaje_impresora + config.getDir_sistema() + saltolinea;
-        mensaje_impresora = mensaje_impresora + "ENTREGA:" + v8_tipo_entrega + saltolinea;
+
         mensaje_impresora = mensaje_impresora + "VENTA:" + v1_idventa + saltolinea;
-        mensaje_impresora = mensaje_impresora + "FECHA: " + v2_fecha + saltolinea;
+        mensaje_impresora = mensaje_impresora + "FEC: " + v2_fecha + saltolinea;
         mensaje_impresora = mensaje_impresora + "USUARIO:" + v10_usuario + saltolinea;
-        mensaje_impresora = mensaje_impresora + "CLIENTE: " + v3_cliente + saltolinea;
-        mensaje_impresora = mensaje_impresora + "TELEFONO: " + v4_telefono + saltolinea;
-        mensaje_impresora = mensaje_impresora + "DIRECCION: " + v5_direccion + saltolinea;
+        mensaje_impresora = mensaje_impresora + "CLI: " + v3_cliente + saltolinea;
+        mensaje_impresora = mensaje_impresora + "TEL: " + v4_telefono + saltolinea;
+        mensaje_impresora = mensaje_impresora + "DIR: " + v5_direccion + saltolinea;
         mensaje_impresora = mensaje_impresora + "==========================================" + saltolinea;
         for (int i = 0; i < tk_iv_fila; i++) {
             mensaje_impresora = mensaje_impresora + iv4_descripcion[i] + saltolinea;
@@ -128,6 +128,8 @@ public class PosImprimir_Venta {
             }
         }
         mensaje_impresora = mensaje_impresora + "==========================================" + saltolinea;
+        mensaje_impresora = mensaje_impresora + "ENTREGA:" + v8_tipo_entrega + saltolinea;
+        mensaje_impresora = mensaje_impresora + "PAGO: " + v11_forma_pago + saltolinea;
         mensaje_impresora = mensaje_impresora + "OBS: " + v7_observacion + saltolinea;
         mensaje_impresora = mensaje_impresora + "VENTA :" + tabular + tabular + v9_VENTA + saltolinea;
         mensaje_impresora = mensaje_impresora + "DELIVERY :" + tabular + tabular + v8_monto_delivery + saltolinea;

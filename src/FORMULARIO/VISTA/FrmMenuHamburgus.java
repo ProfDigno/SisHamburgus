@@ -109,7 +109,7 @@ public class FrmMenuHamburgus extends javax.swing.JFrame {
     void titulo_sistema(String servidor) {
         String titulo = jsconfig.getNombre_sistema() + " V." + jsconfig.getVersion()
                 + " BD: " + var.getPsLocalhost() + "/" + var.getPsPort() + "/" + var.getPsNomBD()
-                + " Fecha: " + jsconfig.getFecha_sis() + servidor+" /Dias:"+corte.getCant_dias();
+                + " Fecha: " + jsconfig.getFecha_sis() + servidor + " /Dias:" + corte.getCant_dias();
         this.setTitle(titulo);
     }
 
@@ -141,7 +141,6 @@ public class FrmMenuHamburgus extends javax.swing.JFrame {
         FrmMenuHamburgus.jMenu_compra.setEnabled(blo);
         FrmMenuHamburgus.btncotizacion.setEnabled(blo);
     }
-
 
     void crear_cliente_de_json() {
         jsCli.leer_jsom_cliente();
@@ -182,7 +181,7 @@ public class FrmMenuHamburgus extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "NO HAY CAJA ABIERTA SE DEBE ABRIR UNO NUEVO");
             evetbl.abrir_TablaJinternal(new FrmCaja_Abrir());
         } else {
-            evetbl.abrir_TablaJinternal(new FrmCaja_Cierre());
+            evetbl.abrir_TablaJinternal(new FrmCaja_Cierre2());
         }
     }
 
@@ -197,11 +196,19 @@ public class FrmMenuHamburgus extends javax.swing.JFrame {
                 + "    BEGIN\n"
                 + "        BEGIN\n"
                 //                + "        update producto set orden='0'  where orden is null;\n "
-                                + "        ALTER TABLE venta ADD COLUMN forma_pago text; "
-                                + "        update venta set forma_pago='EFECTIVO'; "
-
-                
-                                + "        EXCEPTION\n"
+//                + "ALTER TABLE venta ADD COLUMN forma_pago text;\n "
+//                + "update venta set forma_pago='EFECTIVO';\n "
+                + "ALTER TABLE caja_detalle ADD COLUMN estado text;\n"
+                + "update caja_detalle set estado='temp';\n"
+                + "update caja_detalle set estado='EMITIDO' where tabla_origen='VENTA' and monto_venta>0;\n"
+                + "update caja_detalle set estado='ANULADO' where tabla_origen='VENTA' and monto_venta=0;\n"
+                + "update caja_detalle set estado='CERRADO' where tabla_origen='CAJA_CERRAR';\n"
+                + "update caja_detalle set estado='ABIERTO' where tabla_origen='CAJA_ABRIR';\n"
+                + "ALTER TABLE caja_detalle RENAME COLUMN monto_venta TO monto_venta_efectivo;\n"
+                + "ALTER TABLE caja_detalle ADD COLUMN monto_venta_tarjeta numeric(14,0);\n"
+                + "update caja_detalle set monto_venta_tarjeta=0;\n"
+                + "update caja_detalle set tabla_origen='VENTA_EFECTIVO' where tabla_origen='VENTA';\n"
+                + "        EXCEPTION\n"
                 + "            WHEN duplicate_column THEN RAISE NOTICE 'duplicate_column.';\n"
                 + "        END;\n"
                 + "    END;\n"
@@ -1010,7 +1017,8 @@ public class FrmMenuHamburgus extends javax.swing.JFrame {
 
     private void btncaja_detalleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btncaja_detalleActionPerformed
         // TODO add your handling code here:
-        evetbl.abrir_TablaJinternal(new FrmCajaDetalle());
+//        evetbl.abrir_TablaJinternal(new FrmCajaDetalle());
+        evetbl.abrir_TablaJinternal(new FrmCajaDetalle2());
     }//GEN-LAST:event_btncaja_detalleActionPerformed
 
     private void jMenuItem13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem13ActionPerformed
@@ -1040,7 +1048,7 @@ public class FrmMenuHamburgus extends javax.swing.JFrame {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         // TODO add your handling code here:
-        
+
         if (corte.verificar_corte_admin(conn)) {
             JDiaLogin log = new JDiaLogin(this, true);
             log.setVisible(true);
@@ -1156,7 +1164,7 @@ public class FrmMenuHamburgus extends javax.swing.JFrame {
 
     private void jMenuItem30ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem30ActionPerformed
         // TODO add your handling code here:
-        evetbl.abrir_TablaJinternal(new FrmCaja_abrir_cerrar());
+        evetbl.abrir_TablaJinternal(new FrmCaja_abrir_cerrar2());
     }//GEN-LAST:event_jMenuItem30ActionPerformed
 
     private void btncajacerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btncajacerrarActionPerformed
@@ -1176,7 +1184,7 @@ public class FrmMenuHamburgus extends javax.swing.JFrame {
 
     private void btncaja_cierreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btncaja_cierreActionPerformed
         // TODO add your handling code here:
-        evetbl.abrir_TablaJinternal(new FrmCaja_abrir_cerrar());
+        evetbl.abrir_TablaJinternal(new FrmCaja_abrir_cerrar2());
     }//GEN-LAST:event_btncaja_cierreActionPerformed
 
     private void jMenuItem33ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem33ActionPerformed
@@ -1234,6 +1242,54 @@ public class FrmMenuHamburgus extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(FrmMenuHamburgus.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>

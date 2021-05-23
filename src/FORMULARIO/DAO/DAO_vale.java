@@ -39,7 +39,7 @@ public class DAO_vale {
             + " WHERE idvale=?;";
     private String sql_anular = "UPDATE public.vale\n"
             + "   SET estado=?\n"
-            + " WHERE indice=?;";
+            + " WHERE idvale=?;";
     private String sql_select = "select v.idvale,v.indice,to_char(v.fecha_emision,'yyyy-MM-dd HH24:MI') as fecha,\n"
             + "v.descripcion,cl.nombre as cliente,\n"
             + "TRIM(to_char(v.monto_vale,'999G999G999')) AS monto,\n"
@@ -124,13 +124,13 @@ public class DAO_vale {
             evemen.mensaje_error(e, sql_update + "\n" + vale.toString(), titulo);
         }
     }
-    public void update_vale_anular(Connection conn, vale vale) {
+    public void update_vale_anular1(Connection conn, vale vale) {
         String titulo = "update_vale_anular";
         PreparedStatement pst = null;
         try {
             pst = conn.prepareStatement(sql_anular);
             pst.setString(1, vale.getEstado());
-            pst.setString(2, vale.getIndice());
+            pst.setInt(2, vale.getIdvale());
             pst.execute();
             pst.close();
             evemen.Imprimir_serial_sql(sql_anular + "\n" + vale.toString(), titulo);

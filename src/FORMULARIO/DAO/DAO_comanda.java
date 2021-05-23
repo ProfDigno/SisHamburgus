@@ -182,7 +182,7 @@ public class DAO_comanda {
             String fecha = evefec.getString_formato_fecha();
             String sql = "select v.idventa,(to_char(v.fecha_inicio,'HH24:MI')) as hora,v.tipo_entrega,v.comanda,v.estado, \n"
                     + "(to_char(v.fecha_inicio,'ssss')) as tiempo,"
-                    + "(v.estado='ANULADO_temp') as anulado,v.indice,c.nombre as cliente \n "
+                    + "(v.estado='ANULADO_temp') as anulado,v.indice,c.nombre as cliente,c.direccion \n "
                     + "from venta v,cliente c \n"
                     + "where v.fk_idcliente=c.idcliente \n"
                     + "and (date(v.fecha_inicio)=(date('" + fecha + "')))\n"
@@ -201,14 +201,15 @@ public class DAO_comanda {
                     String comanda = rs.getString("comanda");
                     String indice = rs.getString("indice");
                     String cliente = rs.getString("cliente");
+                    String direccion = rs.getString("direccion");
                     int tiempo_sql = rs.getInt("tiempo");
                     boolean es_anulado = rs.getBoolean("anulado");
                     int diferencia_tiempo = evefec.getInt_diferencia_en_segundo(tiempo_sql);
                     if (es_anulado) {
                         estado = "\n###ANULADO###\n###ANULADO###\n###ANULADO###";
                     }
-                    String suma_comanda = "CLIENTE="+cliente+"\n**IDVENTA:(" + idventa + ")** HORA: " + hora + linea + tipo_entrega
-                            + " Retraso:" + evefec.getString_convertir_segundo_hora(diferencia_tiempo) + linea + comanda + estado;
+                    String suma_comanda = "CLI="+cliente+"\n**IDV:(" + idventa + ")** HORA: " + hora + linea + tipo_entrega
+                            + " R: " + evefec.getString_convertir_segundo_hora(diferencia_tiempo) + linea + comanda + estado;
                     cargar_panel_area(suma_comanda, row, diferencia_tiempo, es_anulado);
                     pasar_a_terminado(conn,diferencia_tiempo, indice);
                     row++;

@@ -32,7 +32,7 @@ public class DAO_compra {
     private String sql_cargar = "SELECT idcompra,fecha_emision,estado,observacion,forma_pago,monto_compra,fk_idproveedor,fk_idusuario,indice FROM compra WHERE idcompra=";
     private String sql_estado = "UPDATE public.compra\n"
             + "   SET estado=?\n"
-            + " WHERE indice=?;";
+            + " WHERE idcompra=?;";
 
     public void insertar_compra(Connection conn, compra com) {
         com.setC1idcompra(eveconn.getInt_ultimoID_mas_uno(conn, com.getTb_compra(), com.getId_idcompra()));
@@ -112,13 +112,13 @@ public class DAO_compra {
         evejt.setAnchoColumnaJtable(tbltabla, Ancho);
     }
 
-    public void update_estado_compra(Connection conn, compra com) {
+    public void update_estado_compra1(Connection conn, compra com) {
         String titulo = "update_estado_venta";
         PreparedStatement pst = null;
         try {
             pst = conn.prepareStatement(sql_estado);
             pst.setString(1, com.getC3estado());
-            pst.setString(2, com.getC9indice());
+            pst.setInt(2, com.getC1idcompra());
             pst.execute();
             pst.close();
             evemen.Imprimir_serial_sql(sql_estado + "\n" + com.toString(), titulo);

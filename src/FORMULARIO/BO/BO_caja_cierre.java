@@ -24,7 +24,7 @@ public class BO_caja_cierre {
     private DAO_caja_cierre cjcie_dao = new DAO_caja_cierre();
     EvenMensajeJoptionpane evemen = new EvenMensajeJoptionpane();
     private DAO_caja_detalle cdao=new DAO_caja_detalle();
-    public void insertar_caja_cierre(caja_cierre cjcie,caja_detalle caja) {
+    public void insertar_caja_cierre1(caja_cierre cjcie,caja_detalle caja) {
         String titulo = "insertar_caja_cierre";
         Connection conn = ConnPostgres.getConnPosgres();
         try {
@@ -32,7 +32,7 @@ public class BO_caja_cierre {
                 conn.setAutoCommit(false);
             }
             cjcie_dao.insertar_caja_cierre(conn, cjcie);
-            cdao.insertar_caja_detalle(conn, caja);
+            cdao.insertar_caja_detalle1(conn, caja);
 //            cjcie_dao.actualizar_tabla_caja_cierre(conn, tbltabla);
             conn.commit();
         } catch (SQLException e) {

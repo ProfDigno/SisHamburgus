@@ -42,7 +42,7 @@ public class BO_venta {
     private DAO_venta_mesa vmesa_dao = new DAO_venta_mesa();
     private DAO_itemven_insumo ividao = new DAO_itemven_insumo();
 
-    public boolean getBoolean_insertar_venta(Connection conn, JTable tblitem_producto, item_venta item, venta ven, caja_detalle caja,
+    public boolean getBoolean_insertar_venta1(Connection conn, JTable tblitem_producto, item_venta item, venta ven, caja_detalle caja,
             boolean isCargar_venta_mesa, boolean esMesa_LIBRE, item_venta_mesa ivm, item_venta_mesa_venta ivmv, venta_mesa vmesa,
             itemven_insumo iteminsu, int fk_idventa, String idventa_mesa_select) {
         boolean insertado = false;
@@ -53,7 +53,7 @@ public class BO_venta {
             }
             vdao.insertar_venta(conn, ven);
             ivdao.insertar_item_venta_de_tabla(conn, tblitem_producto, item, ven);
-            cdao.insertar_caja_detalle(conn, caja);
+            cdao.insertar_caja_detalle1(conn, caja);
             if (isCargar_venta_mesa) {
                 System.out.println("ES VENTA PARA LA MESA");
                 if (esMesa_LIBRE) {
@@ -148,14 +148,14 @@ public class BO_venta {
         }
     }
 
-    public void update_anular_venta(Connection conn, venta ven, caja_detalle caja) {
+    public void update_anular_venta1(Connection conn, venta ven, caja_detalle caja) {
         String titulo = "update_anular_venta";
         try {
             if (conn.getAutoCommit()) {
                 conn.setAutoCommit(false);
             }
             vdao.update_estado_venta(conn, ven);
-            cdao.anular_caja_detalle(conn, caja);
+            cdao.anular_caja_detalle1(conn, caja);
             ivdao.recargar_stock_producto(conn, ven);
             conn.commit();
         } catch (SQLException e) {

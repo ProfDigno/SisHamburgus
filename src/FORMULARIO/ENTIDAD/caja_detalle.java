@@ -10,10 +10,38 @@ package FORMULARIO.ENTIDAD;
  * @author Digno
  */
 public class caja_detalle {
+
+    /**
+     * @return the c17estado
+     */
+    public String getC17estado() {
+        return c17estado;
+    }
+
+    /**
+     * @param c17estado the c17estado to set
+     */
+    public void setC17estado(String c17estado) {
+        this.c17estado = c17estado;
+    }
+
+    /**
+     * @return the c18monto_venta_tarjeta
+     */
+    public double getC18monto_venta_tarjeta() {
+        return c18monto_venta_tarjeta;
+    }
+
+    /**
+     * @param c18monto_venta_tarjeta the c18monto_venta_tarjeta to set
+     */
+    public void setC18monto_venta_tarjeta(double c18monto_venta_tarjeta) {
+        this.c18monto_venta_tarjeta = c18monto_venta_tarjeta;
+    }
     private int c1idcaja_detalle;
     private String c2fecha_emision;
     private String c3descripcion;
-    private double c4monto_venta;
+    private double c4monto_venta_efectivo;
     private double c5monto_delivery;
     private double c6monto_gasto;
     private double c7monto_compra;
@@ -26,6 +54,8 @@ public class caja_detalle {
     private String c14cierre;
     private double c15monto_caja;
     private double c16monto_cierre;
+    private String c17estado;
+    private double c18monto_venta_tarjeta;
     private static String tabla;
     private static String idtabla;
 
@@ -74,12 +104,12 @@ public class caja_detalle {
         this.c3descripcion = c3descripcion;
     }
 
-    public double getC4monto_venta() {
-        return c4monto_venta;
+    public double getC4monto_venta_efectivo() {
+        return c4monto_venta_efectivo;
     }
 
-    public void setC4monto_venta(double c4monto_venta) {
-        this.c4monto_venta = c4monto_venta;
+    public void setC4monto_venta_efectivo(double c4monto_venta) {
+        this.c4monto_venta_efectivo = c4monto_venta;
     }
 
     public double getC5monto_delivery() {
@@ -156,7 +186,7 @@ public class caja_detalle {
 
     @Override
     public String toString() {
-        return "caja_detalle{" + "c1idcaja_detalle=" + c1idcaja_detalle + ", c2fecha_emision=" + c2fecha_emision + ", c3descripcion=" + c3descripcion + ", c4monto_venta=" + c4monto_venta + ", c5monto_delivery=" + c5monto_delivery + ", c6monto_gasto=" + c6monto_gasto + ", c7monto_compra=" + c7monto_compra + ", c8monto_vale=" + c8monto_vale + ", c9id_origen=" + c9id_origen + ", c10tabla_origen=" + c10tabla_origen + ", c11fk_idusuario=" + c11fk_idusuario + ", c12indice=" + c12indice + ", c13equipo=" + c13equipo + ", c14cierre=" + c14cierre + ", c15monto_caja=" + c15monto_caja + ", c16monto_cierre=" + c16monto_cierre + '}';
+        return "caja_detalle{" + "c1idcaja_detalle=" + c1idcaja_detalle + ", c2fecha_emision=" + c2fecha_emision + ", c3descripcion=" + c3descripcion + ", c4monto_venta=" + c4monto_venta_efectivo + ", c5monto_delivery=" + c5monto_delivery + ", c6monto_gasto=" + c6monto_gasto + ", c7monto_compra=" + c7monto_compra + ", c8monto_vale=" + c8monto_vale + ", c9id_origen=" + c9id_origen + ", c10tabla_origen=" + c10tabla_origen + ", c11fk_idusuario=" + c11fk_idusuario + ", c12indice=" + c12indice + ", c13equipo=" + c13equipo + ", c14cierre=" + c14cierre + ", c15monto_caja=" + c15monto_caja + ", c16monto_cierre=" + c16monto_cierre + '}';
     }
 
     

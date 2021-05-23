@@ -25,7 +25,7 @@ public class BO_gasto {
     private DAO_caja_detalle cdao = new DAO_caja_detalle();
     EvenMensajeJoptionpane evmen = new EvenMensajeJoptionpane();
 
-    public boolean getboolean_insertar_gasto(gasto gas, caja_detalle caja) {
+    public boolean getboolean_insertar_gasto1(gasto gas, caja_detalle caja) {
         String titulo = "insertar_gasto";
         Connection conn = ConnPostgres.getConnPosgres();
         try {
@@ -33,7 +33,7 @@ public class BO_gasto {
                 conn.setAutoCommit(false);
             }
             gdao.insertar_gasto(conn, gas);
-            cdao.insertar_caja_detalle(conn, caja);
+            cdao.insertar_caja_detalle1(conn, caja);
             conn.commit();
             return true;
         } catch (SQLException e) {
@@ -69,7 +69,7 @@ public class BO_gasto {
         }
     }
 
-    public void update_gasto_anular(gasto gas, caja_detalle caja) {
+    public void update_gasto_anular1(gasto gas, caja_detalle caja) {
         if (evmen.MensajeGeneral_warning("ESTAS SEGURO DE ANULAR EL GASTO", "ANULAR", "ANULAR", "CANCELAR")) {
             String titulo = "update_gasto";
             Connection conn = ConnPostgres.getConnPosgres();
@@ -77,8 +77,8 @@ public class BO_gasto {
                 if (conn.getAutoCommit()) {
                     conn.setAutoCommit(false);
                 }
-                gdao.update_gasto_anular(conn, gas);
-                cdao.anular_caja_detalle(conn, caja);
+                gdao.update_gasto_anular1(conn, gas);
+                cdao.anular_caja_detalle1(conn, caja);
                 conn.commit();
             } catch (SQLException e) {
                 evmen.mensaje_error(e, gas.toString(), titulo);

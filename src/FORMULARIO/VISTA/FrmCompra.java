@@ -303,7 +303,7 @@ public class FrmCompra extends javax.swing.JInternalFrame {
     void cargar_datos_caja() {
         caja.setC2fecha_emision(evefec.getString_formato_fecha_hora());
         caja.setC3descripcion("(COMPRA) id:" + idcompra_insumo_ultimo + " Pro:" + txtprovee_nombre.getText());
-        caja.setC4monto_venta(0);
+        caja.setC4monto_venta_efectivo(0);
         caja.setC5monto_delivery(0);
         caja.setC6monto_gasto(0);
         caja.setC7monto_compra(monto_compra);
@@ -315,13 +315,15 @@ public class FrmCompra extends javax.swing.JInternalFrame {
         caja.setC13equipo1(evepc.getString_nombre_pc());
         caja.setC15monto_caja1(0);
         caja.setC16monto_cierre(0);
+        caja.setC17estado("EMITIDO");
+        caja.setC18monto_venta_tarjeta(0);
     }
     void boton_comfirmar_compra() {
         if (validar_compra()) {
             sumar_item_compra();
             cargar_datos_compra();
             cargar_datos_caja();
-            if (ciBO.getBoolean_compra(tblitem_producto, compi,caja)) {
+            if (ciBO.getBoolean_compra1(tblitem_producto, compi,caja)) {
                 if (habilitar_editar) {
                     habilitar_editar = false;
                     btnconfirmar_insertar.setText("CONFIRMAR");
@@ -361,9 +363,10 @@ public class FrmCompra extends javax.swing.JInternalFrame {
     void anular_compra(int idcompra_insumo, String indice) {
         compi.setC1idcompra(idcompra_insumo);
         compi.setC3estado(est_ANULADO);
-        compi.setC9indice(indice);
-        caja.setC12indice(indice);
-        ciBO.update_anular_compra(connLocal, compi, caja);
+//        compi.setC9indice(indice);
+        caja.setC10tabla_origen("COMPRA");
+        caja.setC9id_origen(idcompra_insumo);
+        ciBO.update_anular_compra1(connLocal, compi, caja);
         cidao.actualizar_tabla_compra(connLocal, tblcompra_insumo);
     }
 
@@ -540,7 +543,7 @@ public class FrmCompra extends javax.swing.JInternalFrame {
         cidao.cargar_compra(connLocal, compi, idcompra_insumo);
         caja.setC2fecha_emision(evefec.getString_formato_fecha_hora());
         caja.setC3descripcion("(COMPRA) id:" + idcompra_insumo + " Usuario:" + usu.getGlobal_nombre());
-        caja.setC4monto_venta(0);
+        caja.setC4monto_venta_efectivo(0);
         caja.setC5monto_delivery(0);
         caja.setC6monto_gasto(0);
         caja.setC7monto_compra(compi.getC6monto_compra());
@@ -552,7 +555,9 @@ public class FrmCompra extends javax.swing.JInternalFrame {
         caja.setC13equipo1(evepc.getString_nombre_pc());
         caja.setC15monto_caja1(0);
         caja.setC16monto_cierre(0);
-        cdao.insertar_caja_detalle(connLocal, caja);
+        caja.setC17estado("EMITIDO");
+        caja.setC18monto_venta_tarjeta(0);
+        cdao.insertar_caja_detalle1(connLocal, caja);
     }
 
     void cargar_itemventa_cantidad(java.awt.event.KeyEvent evt) {

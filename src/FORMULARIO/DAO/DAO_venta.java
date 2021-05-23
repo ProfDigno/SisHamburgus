@@ -47,9 +47,9 @@ public class DAO_venta {
             + "            ?, ?,?,?,?);";
     String restadeHoraTerminado = " ((((date_part('hour', v.fecha_fin))*60)+(date_part('minute', v.fecha_fin))) - \n"
             + "(((date_part('hour', v.fecha_inicio))*60)+(date_part('minute', v.fecha_inicio)))) ";
-    private String sql_terminar = "UPDATE public.venta\n"
+    private String sql_update_estado = "UPDATE public.venta\n"
             + "   SET fecha_fin=?,estado=?\n"
-            + " WHERE indice=?;";
+            + " WHERE idventa=?;";
     private String sql_entregador = "UPDATE public.venta\n"
             + "   SET fk_identregador=?\n"
             + " WHERE indice=?;";
@@ -107,16 +107,16 @@ public class DAO_venta {
         String titulo = "update_estado_venta";
         PreparedStatement pst = null;
         try {
-            pst = conn.prepareStatement(sql_terminar);
+            pst = conn.prepareStatement(sql_update_estado);
             pst.setTimestamp(1, evefec.getTimestamp_sistema());
             pst.setString(2, ven.getC5estado());
-            pst.setString(3, ven.getC15indice());
+            pst.setInt(3, ven.getC1idventa());
             pst.execute();
             pst.close();
-            evemen.Imprimir_serial_sql(sql_terminar + "\n" + ven.toString(), titulo);
+            evemen.Imprimir_serial_sql(sql_update_estado + "\n" + ven.toString(), titulo);
             evemen.modificado_correcto(mensaje_terminar, false);
         } catch (SQLException e) {
-            evemen.mensaje_error(e, sql_terminar + "\n" + ven.toString(), titulo);
+            evemen.mensaje_error(e, sql_update_estado + "\n" + ven.toString(), titulo);
         }
     }
 

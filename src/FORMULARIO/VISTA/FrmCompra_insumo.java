@@ -337,7 +337,7 @@ public class FrmCompra_insumo extends javax.swing.JInternalFrame {
         compi.setEstado(est_ANULADO);
         compi.setTiponota(est_ANULADO);
         caja.setC12indice(indice);
-        if (ciBO.getBoolean_update_estado_compra_insumo(compi, caja, true)) {
+        if (ciBO.getBoolean_update_estado_compra_insumo1(compi, caja, true)) {
             cidao.actualizar_tabla_compra_insumo(connLocal, tblcompra_insumo, "");
         }
     }
@@ -414,7 +414,7 @@ public class FrmCompra_insumo extends javax.swing.JInternalFrame {
                 compi.setIdcompra_insumo(idcompra_insumo);
                 compi.setEstado(est_CONFIRMADO);
                 compi.setTiponota(tip_COMPRADO);
-                if (ciBO.getBoolean_update_estado_compra_insumo(compi, caja, false)) {
+                if (ciBO.getBoolean_update_estado_compra_insumo1(compi, caja, false)) {
                     cargar_datos_caja_insertar(idcompra_insumo);
                     cidao.actualizar_tabla_compra_insumo(connLocal, tblcompra_insumo, "");
                 }
@@ -515,7 +515,7 @@ public class FrmCompra_insumo extends javax.swing.JInternalFrame {
         cidao.cargar_compra_insumo(connLocal, compi, idcompra_insumo);
         caja.setC2fecha_emision(evefec.getString_formato_fecha_hora());
         caja.setC3descripcion("(COMPRA-INSUMO) id:" + idcompra_insumo + " Usuario:" + usu.getGlobal_nombre());
-        caja.setC4monto_venta(0);
+        caja.setC4monto_venta_efectivo(0);
         caja.setC5monto_delivery(0);
         caja.setC6monto_gasto(0);
         caja.setC7monto_compra(compi.getMonto_compra());
@@ -527,7 +527,9 @@ public class FrmCompra_insumo extends javax.swing.JInternalFrame {
         caja.setC13equipo1(evepc.getString_nombre_pc());
         caja.setC15monto_caja1(0);
         caja.setC16monto_cierre(0);
-        cdao.insertar_caja_detalle(connLocal, caja);
+        caja.setC17estado("EMITIDO");
+        caja.setC18monto_venta_tarjeta(0);
+        cdao.insertar_caja_detalle1(connLocal, caja);
     }
     void cargar_itemventa_cantidad(java.awt.event.KeyEvent evt) {
         if (evt.getKeyCode() == KeyEvent.VK_DOWN) {

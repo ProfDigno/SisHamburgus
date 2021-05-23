@@ -1,10 +1,10 @@
 {
-"nom_sistema":"HAMBURGUS",
-"tel_sistema":"TEL: ",
-"dir_sistema":"DIR: ",
-"fecha_sis":"13-04-2021",
-"tiempo_max_emitido":"60",
-"version":"2.9",
+"nom_sistema":"SAMU",
+"tel_sistema":"TEL:(0993)286330",
+"dir_sistema":"DIR:Area 3-Avda Campo Via ",
+"fecha_sis":"21-04-2021",
+"tiempo_max_emitido":"30",
+"version":"3.1",
 "user_admin":"5",
 "pass_admin":"3",
 "venta_negativo":false

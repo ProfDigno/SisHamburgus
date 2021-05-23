@@ -38,7 +38,7 @@ import javax.swing.JTextField;
  *
  * @author Digno
  */
-public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
+public class FrmCaja_Cierre2 extends javax.swing.JInternalFrame {
 
     PosImprimir_Venta posv = new PosImprimir_Venta();
     Connection connLocal = null;
@@ -70,11 +70,12 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
         connLocal = cpt.getConnPosgres();
         evetbl.centrar_formulario(this);
         caja_detalle_cantidad_total("CAJA_ABRIR", "monto_caja", txtcant_caja, jFabrir_caja);
-        caja_detalle_cantidad_total("VENTA", "monto_venta", txtcant_venta, jFtotal_venta);
+        caja_detalle_cantidad_total("VENTA_EFECTIVO", "monto_venta_efectivo", txtcant_venta_efectivo, jFtotal_venta_efectivo);
+        caja_detalle_cantidad_total("VENTA_TARJETA", "monto_venta_tarjeta", txtcant_venta_tarjeta, jFtotal_venta_tarjeta);
         caja_detalle_cantidad_total("GASTO", "monto_gasto", txtcant_gasto, jFtotal_gasto);
         caja_detalle_cantidad_total("COMPRA", "monto_compra", txtcant_compra, jFtotal_compra);
         caja_detalle_cantidad_total("VALE", "monto_vale", txtcant_vale, jFtotal_vale);
-        caja_detalle_cantidad_total("VENTA", "monto_delivery", txtcant_deli, jFtotal_deli);
+        caja_detalle_cantidad_total_dos("VENTA_EFECTIVO","VENTA_TARJETA", "monto_delivery", txtcant_deli, jFtotal_deli);
         caja_detalle_SALDO();
         color_formulario();
         ocultar_campos();
@@ -82,17 +83,17 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
     }
 
     void ocultar_campos() {
-        Color color_campo=new Color(0,0,0);
-        if (usu.getGlobal_nivel().equals("ADMIN")) {
-            color_campo=new Color(254,254,254);
-        }
+//        Color color_campo=new Color(0,0,0);
+//        if (usu.getGlobal_nivel().equals("ADMIN")) {
+           Color color_campo=new Color(254,254,254);
+//        }
         txtcant_caja.setBackground(color_campo);
         txtcant_compra.setBackground(color_campo);
         txtcant_gasto.setBackground(color_campo);
         txtcant_vale.setBackground(color_campo);
-        txtcant_venta.setBackground(color_campo);
+        txtcant_venta_efectivo.setBackground(color_campo);
         jFabrir_caja.setBackground(color_campo);
-        jFtotal_venta.setBackground(color_campo);
+        jFtotal_venta_efectivo.setBackground(color_campo);
         jFtotal_gasto.setBackground(color_campo);
         jFtotal_compra.setBackground(color_campo);
         jFtotal_vale.setBackground(color_campo);
@@ -124,7 +125,7 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
     void cargar_datos_caja_detalle(double saldo_cierre) {
         caja.setC2fecha_emision(evefec.getString_formato_fecha_hora());
         caja.setC3descripcion("(VENTA) CAJA CERRAR:");
-        caja.setC4monto_venta(0);
+        caja.setC4monto_venta_efectivo(0);
         caja.setC5monto_delivery(0);
         caja.setC6monto_gasto(0);
         caja.setC7monto_compra(0);
@@ -136,7 +137,9 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
         caja.setC13equipo1(evepc.getString_nombre_pc());
         caja.setC15monto_caja1(0);//restante saldo
         caja.setC16monto_cierre(saldo_cierre);
-        cdao.insertar_caja_detalle(connLocal, caja);
+        caja.setC17estado("CERRADO");
+        caja.setC18monto_venta_tarjeta(0);
+        cdao.insertar_caja_detalle1(connLocal, caja);
     }
 
     void boton_caja_cierre() {
@@ -171,11 +174,48 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
             evemen.mensaje_error(e, sql, titulo);
         }
     }
-
-    void caja_detalle_SALDO() {
+void caja_detalle_cantidad_total_dos(String origen_tabla1,String origen_tabla2, String campo_total, JTextField txtcantidad, JFormattedTextField jftotal) {
         String titulo = "caja_detalle_cantidad_total";
-        String sql = "select ((sum(monto_venta+monto_caja))-(sum(monto_gasto+monto_compra+monto_vale))) as sis_total, \n"
-                + "((sum(monto_venta+monto_caja))-(sum(monto_gasto+monto_compra+monto_vale+monto_delivery))) as sis_sin_deli "
+        String sql = "select count(*) as cantidad,sum(" + campo_total + ") as total\n"
+                + " from caja_detalle c \n"
+                + "where c.cierre='A' \n"
+                + "and (c.tabla_origen='" + origen_tabla1 + "' or c.tabla_origen='" + origen_tabla2 + "')";
+        try {
+            ResultSet rs = eveconn.getResulsetSQL(connLocal, sql, titulo);
+            if (rs.next()) {
+                String cantidad = rs.getString("cantidad");
+                txtcantidad.setText(cantidad);
+                int total = rs.getInt("total");
+                jftotal.setValue(total);
+            }
+        } catch (SQLException e) {
+            evemen.mensaje_error(e, sql, titulo);
+        }
+    }
+//    void caja_detalle_SALDO() {
+//        String titulo = "caja_detalle_cantidad_total";
+//        String sql = "select ((sum(monto_venta_efectivo+monto_venta_tarjeta+monto_caja))-(sum(monto_gasto+monto_compra+monto_vale))) as saldo \n"
+//                + "from caja_detalle where cierre='A' ";
+//        try {
+//            ResultSet rs = eveconn.getResulsetSQL(connLocal, sql, titulo);
+//            if (rs.next()) {
+//                double saldo = rs.getDouble("saldo");
+//                jFcaja_detalle_sistema_total.setValue(saldo);
+//                caja_detalle_SALDO = saldo;
+//                if (caja_detalle_SALDO < 0) {
+//                    jFcaja_detalle_sistema_total.setBackground(Color.red);
+//                } else {
+//                    jFcaja_detalle_sistema_total.setBackground(Color.green);
+//                }
+//            }
+//        } catch (SQLException e) {
+//            evemen.mensaje_error(e, sql, titulo);
+//        }
+//    }
+ void caja_detalle_SALDO() {
+        String titulo = "caja_detalle_cantidad_total";
+        String sql = "select ((sum(monto_venta_efectivo+monto_venta_tarjeta+monto_caja))-(sum(monto_gasto+monto_compra+monto_vale))) as sis_total, \n"
+                + "((sum(monto_venta_efectivo+monto_venta_tarjeta+monto_caja))-(sum(monto_gasto+monto_compra+monto_vale+monto_delivery))) as sis_sin_deli "
                 + "from caja_detalle where cierre='A' ";
         try {
             ResultSet rs = eveconn.getResulsetSQL(connLocal, sql, titulo);
@@ -195,7 +235,6 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
             evemen.mensaje_error(e, sql, titulo);
         }
     }
-
     void calcular_diferencia() {
 //        caja_detalle_CIERRE = evejtf.getDouble_format_nro_entero(txtmonto_caja_cierre);
         caja_detalle_CIERRE = Double.parseDouble(txtmonto_caja_cierre.getText());
@@ -262,7 +301,7 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
         }
     }
 
-    public FrmCaja_Cierre() {
+    public FrmCaja_Cierre2() {
         initComponents();
         abrir_formulario();
     }
@@ -279,11 +318,15 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
         panel_ingreso = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        txtcant_venta = new javax.swing.JTextField();
+        txtcant_venta_efectivo = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jFabrir_caja = new javax.swing.JFormattedTextField();
-        jFtotal_venta = new javax.swing.JFormattedTextField();
+        jFtotal_venta_efectivo = new javax.swing.JFormattedTextField();
         txtcant_caja = new javax.swing.JTextField();
+        jLabel13 = new javax.swing.JLabel();
+        txtcant_venta_tarjeta = new javax.swing.JTextField();
+        jLabel14 = new javax.swing.JLabel();
+        jFtotal_venta_tarjeta = new javax.swing.JFormattedTextField();
         panel_egreso = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         txtcant_gasto = new javax.swing.JTextField();
@@ -297,9 +340,9 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
         jFtotal_gasto = new javax.swing.JFormattedTextField();
         jFtotal_compra = new javax.swing.JFormattedTextField();
         jFtotal_vale = new javax.swing.JFormattedTextField();
-        jLabel13 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
         txtcant_deli = new javax.swing.JTextField();
-        jLabel14 = new javax.swing.JLabel();
+        jLabel16 = new javax.swing.JLabel();
         jFtotal_deli = new javax.swing.JFormattedTextField();
         panel_resultado = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
@@ -309,7 +352,7 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
         txtmonto_caja_cierre = new javax.swing.JTextField();
         jFcaja_detalle_DIFERENCIA = new javax.swing.JFormattedTextField();
         btncaja_cierre = new javax.swing.JButton();
-        jLabel15 = new javax.swing.JLabel();
+        jLabel17 = new javax.swing.JLabel();
         jFcaja_detalle_sistema_sin_deli = new javax.swing.JFormattedTextField();
 
         setClosable(true);
@@ -323,30 +366,48 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel2.setText("CANT. VENTA:");
 
-        txtcant_venta.setEditable(false);
-        txtcant_venta.setBackground(new java.awt.Color(204, 204, 204));
-        txtcant_venta.setFont(new java.awt.Font("Stencil", 0, 18)); // NOI18N
-        txtcant_venta.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtcant_venta_efectivo.setEditable(false);
+        txtcant_venta_efectivo.setBackground(new java.awt.Color(204, 204, 204));
+        txtcant_venta_efectivo.setFont(new java.awt.Font("Stencil", 0, 18)); // NOI18N
+        txtcant_venta_efectivo.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel3.setText("TOTAL VENTA:");
+        jLabel3.setText("VENTA EFECTIVO:");
 
         jFabrir_caja.setEditable(false);
         jFabrir_caja.setBackground(new java.awt.Color(204, 204, 204));
         jFabrir_caja.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         jFabrir_caja.setFont(new java.awt.Font("Stencil", 0, 18)); // NOI18N
 
-        jFtotal_venta.setEditable(false);
-        jFtotal_venta.setBackground(new java.awt.Color(204, 204, 204));
-        jFtotal_venta.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        jFtotal_venta.setFont(new java.awt.Font("Stencil", 0, 18)); // NOI18N
-        jFtotal_venta.setSelectedTextColor(new java.awt.Color(0, 0, 0));
-        jFtotal_venta.setSelectionColor(new java.awt.Color(0, 0, 0));
+        jFtotal_venta_efectivo.setEditable(false);
+        jFtotal_venta_efectivo.setBackground(new java.awt.Color(204, 204, 204));
+        jFtotal_venta_efectivo.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jFtotal_venta_efectivo.setFont(new java.awt.Font("Stencil", 0, 18)); // NOI18N
+        jFtotal_venta_efectivo.setSelectedTextColor(new java.awt.Color(0, 0, 0));
+        jFtotal_venta_efectivo.setSelectionColor(new java.awt.Color(0, 0, 0));
 
         txtcant_caja.setEditable(false);
         txtcant_caja.setBackground(new java.awt.Color(204, 204, 204));
         txtcant_caja.setFont(new java.awt.Font("Stencil", 0, 18)); // NOI18N
         txtcant_caja.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        jLabel13.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel13.setText("CANT. VENTA:");
+
+        txtcant_venta_tarjeta.setEditable(false);
+        txtcant_venta_tarjeta.setBackground(new java.awt.Color(204, 204, 204));
+        txtcant_venta_tarjeta.setFont(new java.awt.Font("Stencil", 0, 18)); // NOI18N
+        txtcant_venta_tarjeta.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        jLabel14.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel14.setText("VENTA TARJETA:");
+
+        jFtotal_venta_tarjeta.setEditable(false);
+        jFtotal_venta_tarjeta.setBackground(new java.awt.Color(204, 204, 204));
+        jFtotal_venta_tarjeta.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        jFtotal_venta_tarjeta.setFont(new java.awt.Font("Stencil", 0, 18)); // NOI18N
+        jFtotal_venta_tarjeta.setSelectedTextColor(new java.awt.Color(0, 0, 0));
+        jFtotal_venta_tarjeta.setSelectionColor(new java.awt.Color(0, 0, 0));
 
         javax.swing.GroupLayout panel_ingresoLayout = new javax.swing.GroupLayout(panel_ingreso);
         panel_ingreso.setLayout(panel_ingresoLayout);
@@ -354,19 +415,24 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
             panel_ingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel_ingresoLayout.createSequentialGroup()
                 .addGap(19, 19, 19)
-                .addGroup(panel_ingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGroup(panel_ingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(panel_ingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel1)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(jLabel13))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_ingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panel_ingresoLayout.createSequentialGroup()
-                        .addComponent(txtcant_venta, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel3))
+                    .addComponent(txtcant_venta_tarjeta, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtcant_venta_efectivo, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtcant_caja, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panel_ingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jFtotal_venta, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
+                .addGroup(panel_ingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel14))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_ingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jFtotal_venta_tarjeta, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
+                    .addComponent(jFtotal_venta_efectivo, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
                     .addComponent(jFabrir_caja))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -380,10 +446,16 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_ingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(txtcant_venta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtcant_venta_efectivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
-                    .addComponent(jFtotal_venta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 15, Short.MAX_VALUE))
+                    .addComponent(jFtotal_venta_efectivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(panel_ingresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel13)
+                    .addComponent(txtcant_venta_tarjeta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel14)
+                    .addComponent(jFtotal_venta_tarjeta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         panel_egreso.setBackground(new java.awt.Color(153, 204, 255));
@@ -437,16 +509,16 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
         jFtotal_vale.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         jFtotal_vale.setFont(new java.awt.Font("Stencil", 0, 18)); // NOI18N
 
-        jLabel13.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel13.setText("CANT. DELI:");
+        jLabel15.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel15.setText("CANT. DELI:");
 
         txtcant_deli.setEditable(false);
         txtcant_deli.setBackground(new java.awt.Color(204, 204, 204));
         txtcant_deli.setFont(new java.awt.Font("Stencil", 0, 18)); // NOI18N
         txtcant_deli.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
-        jLabel14.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel14.setText("TOTAL DELIVERY:");
+        jLabel16.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel16.setText("TOTAL DELIVERY:");
 
         jFtotal_deli.setEditable(false);
         jFtotal_deli.setBackground(new java.awt.Color(204, 204, 204));
@@ -459,32 +531,32 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
             panel_egresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel_egresoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panel_egresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(panel_egresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel8)
+                    .addComponent(jLabel15))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panel_egresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panel_egresoLayout.createSequentialGroup()
-                        .addGroup(panel_egresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel8))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(panel_egresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtcant_vale, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtcant_compra, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtcant_gasto, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_egresoLayout.createSequentialGroup()
-                        .addComponent(jLabel13)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txtcant_deli, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panel_egresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel14)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel9)
-                    .addComponent(jLabel7))
+                            .addComponent(txtcant_gasto, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(panel_egresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel7)))
+                    .addGroup(panel_egresoLayout.createSequentialGroup()
+                        .addComponent(txtcant_deli, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel16)))
                 .addGap(18, 18, 18)
-                .addGroup(panel_egresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jFtotal_compra, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
-                    .addComponent(jFtotal_gasto)
-                    .addComponent(jFtotal_vale)
+                .addGroup(panel_egresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jFtotal_vale, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
+                    .addComponent(jFtotal_compra, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jFtotal_gasto, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jFtotal_deli))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -508,34 +580,34 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
                     .addComponent(txtcant_vale, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9)
                     .addComponent(jFtotal_vale, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_egresoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel13)
+                    .addComponent(jLabel15)
                     .addComponent(txtcant_deli, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel14)
+                    .addComponent(jLabel16)
                     .addComponent(jFtotal_deli, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         panel_resultado.setBorder(javax.swing.BorderFactory.createTitledBorder("Resultado"));
 
-        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel10.setText("SISTEMA TOTAL:");
+        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        jLabel10.setText("SISTEMA:");
 
-        jLabel11.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
+        jLabel11.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel11.setText("CIERRE:");
 
-        jLabel12.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
+        jLabel12.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel12.setText("DIFERENCIA:");
 
         jFcaja_detalle_sistema_total.setEditable(false);
         jFcaja_detalle_sistema_total.setBackground(new java.awt.Color(204, 204, 204));
         jFcaja_detalle_sistema_total.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         jFcaja_detalle_sistema_total.setText("000");
-        jFcaja_detalle_sistema_total.setFont(new java.awt.Font("Stencil", 0, 25)); // NOI18N
+        jFcaja_detalle_sistema_total.setFont(new java.awt.Font("Stencil", 0, 30)); // NOI18N
         jFcaja_detalle_sistema_total.setSelectedTextColor(new java.awt.Color(0, 0, 0));
         jFcaja_detalle_sistema_total.setSelectionColor(new java.awt.Color(0, 0, 0));
 
-        txtmonto_caja_cierre.setFont(new java.awt.Font("Stencil", 0, 25)); // NOI18N
+        txtmonto_caja_cierre.setFont(new java.awt.Font("Stencil", 0, 30)); // NOI18N
         txtmonto_caja_cierre.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtmonto_caja_cierre.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -549,14 +621,12 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtmonto_caja_cierreKeyReleased(evt);
             }
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtmonto_caja_cierreKeyTyped(evt);
-            }
         });
 
+        jFcaja_detalle_DIFERENCIA.setEditable(false);
         jFcaja_detalle_DIFERENCIA.setBackground(new java.awt.Color(204, 204, 204));
         jFcaja_detalle_DIFERENCIA.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        jFcaja_detalle_DIFERENCIA.setFont(new java.awt.Font("Stencil", 0, 25)); // NOI18N
+        jFcaja_detalle_DIFERENCIA.setFont(new java.awt.Font("Stencil", 0, 30)); // NOI18N
 
         btncaja_cierre.setText("CAJA CIERRE");
         btncaja_cierre.addActionListener(new java.awt.event.ActionListener() {
@@ -565,8 +635,8 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
             }
         });
 
-        jLabel15.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel15.setText("SISTEMA SIN DELIVERY:");
+        jLabel17.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel17.setText("SISTEMA SIN DELIVERY:");
 
         jFcaja_detalle_sistema_sin_deli.setEditable(false);
         jFcaja_detalle_sistema_sin_deli.setBackground(new java.awt.Color(204, 204, 204));
@@ -599,7 +669,7 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btncaja_cierre, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel_resultadoLayout.createSequentialGroup()
-                        .addComponent(jLabel15)
+                        .addComponent(jLabel17)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jFcaja_detalle_sistema_sin_deli, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -613,7 +683,7 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_resultadoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jFcaja_detalle_sistema_sin_deli, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel15))
+                    .addComponent(jLabel17))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panel_resultadoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
@@ -624,7 +694,7 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
                     .addComponent(jFcaja_detalle_DIFERENCIA, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btncaja_cierre, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -642,7 +712,7 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panel_egreso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panel_resultado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(panel_resultado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -669,11 +739,6 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_txtmonto_caja_cierreKeyPressed
 
-    private void txtmonto_caja_cierreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtmonto_caja_cierreKeyTyped
-        // TODO add your handling code here:
-        evejtf.soloNumero(evt);
-    }//GEN-LAST:event_txtmonto_caja_cierreKeyTyped
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btncaja_cierre;
@@ -685,7 +750,8 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
     private javax.swing.JFormattedTextField jFtotal_deli;
     private javax.swing.JFormattedTextField jFtotal_gasto;
     private javax.swing.JFormattedTextField jFtotal_vale;
-    private javax.swing.JFormattedTextField jFtotal_venta;
+    private javax.swing.JFormattedTextField jFtotal_venta_efectivo;
+    private javax.swing.JFormattedTextField jFtotal_venta_tarjeta;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -693,6 +759,8 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -709,7 +777,8 @@ public class FrmCaja_Cierre extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtcant_deli;
     private javax.swing.JTextField txtcant_gasto;
     private javax.swing.JTextField txtcant_vale;
-    private javax.swing.JTextField txtcant_venta;
+    private javax.swing.JTextField txtcant_venta_efectivo;
+    private javax.swing.JTextField txtcant_venta_tarjeta;
     private javax.swing.JTextField txtmonto_caja_cierre;
     // End of variables declaration//GEN-END:variables
 }

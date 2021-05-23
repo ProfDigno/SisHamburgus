@@ -126,7 +126,7 @@ public class FrmGasto extends javax.swing.JInternalFrame {
     void cargar_datos_caja() {
         caja.setC2fecha_emision(txtfecha_emision.getText());
         caja.setC3descripcion("(GASTO) id:" + idgasto + " Tipo:" + txtbuscar_gasto_tipo.getText());
-        caja.setC4monto_venta(0);
+        caja.setC4monto_venta_efectivo(0);
         caja.setC5monto_delivery(0);
         caja.setC6monto_gasto(evejtf.getDouble_format_nro_entero1(txtmonto_gasto));
         caja.setC7monto_compra(0);
@@ -138,6 +138,8 @@ public class FrmGasto extends javax.swing.JInternalFrame {
         caja.setC13equipo1(evepc.getString_nombre_pc());
         caja.setC15monto_caja1(0);
         caja.setC16monto_cierre(0);
+        caja.setC17estado("EMITIDO");
+        caja.setC18monto_venta_tarjeta(0);
     }
 
     void cargar_datos_gasto() {
@@ -155,7 +157,7 @@ public class FrmGasto extends javax.swing.JInternalFrame {
         if (validar_guardar()) {
             cargar_datos_gasto();
             cargar_datos_caja();
-            if (pcBO.getboolean_insertar_gasto(gas, caja)) {
+            if (pcBO.getboolean_insertar_gasto1(gas, caja)) {
                 posgas.boton_imprimir_pos_GASTO(conn, idgasto);
                 reestableser();
 
@@ -166,7 +168,7 @@ public class FrmGasto extends javax.swing.JInternalFrame {
     void cargar_datos_editar_caja() {
         caja.setC2fecha_emision(txtfecha_emision.getText());
         caja.setC3descripcion("(GASTO) id:" + idgasto + " Tipo:" + txtbuscar_gasto_tipo.getText());
-        caja.setC4monto_venta(0);
+        caja.setC4monto_venta_efectivo(0);
         caja.setC5monto_delivery(0);
         caja.setC6monto_gasto(evejtf.getDouble_format_nro_entero1(txtmonto_gasto));
         caja.setC7monto_compra(0);
@@ -201,11 +203,9 @@ public class FrmGasto extends javax.swing.JInternalFrame {
         if (!evejta.getBoolean_validar_select(tblgasto)) {
             gas.setEstado("ANULADO");
             gas.setIdgasto(idgasto);
-            gas.setIndice(indice);
             caja.setC9id_origen(idgasto);
             caja.setC10tabla_origen("GASTO");
-            caja.setC12indice(indice);
-            pcBO.update_gasto_anular(gas, caja);
+            pcBO.update_gasto_anular1(gas, caja);
             reestableser();
         }
     }

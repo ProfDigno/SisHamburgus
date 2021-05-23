@@ -17,7 +17,7 @@ public class BO_compra {
     EvenMensajeJoptionpane evmen = new EvenMensajeJoptionpane();
     private DAO_item_compra icdao=new DAO_item_compra();
     private DAO_caja_detalle cdao = new DAO_caja_detalle();
-   public boolean getBoolean_compra(JTable tblitem_compra_insumo, compra comp,caja_detalle caja) {
+   public boolean getBoolean_compra1(JTable tblitem_compra_insumo, compra comp,caja_detalle caja) {
         boolean insertado = false;
         String titulo = "getBoolean_compra";
         Connection conn = null;
@@ -28,7 +28,7 @@ public class BO_compra {
             }
             com_dao.insertar_compra(conn, comp);
             icdao.insertar_item_compra_de_tabla(conn, tblitem_compra_insumo, comp);
-            cdao.insertar_caja_detalle(conn, caja);
+            cdao.insertar_caja_detalle1(conn, caja);
             conn.commit();
             insertado = true;
         } catch (SQLException e) {
@@ -83,14 +83,14 @@ public class BO_compra {
             }
         }
     }
-    public void update_anular_compra(Connection conn, compra comp, caja_detalle caja) {
+    public void update_anular_compra1(Connection conn, compra comp, caja_detalle caja) {
         String titulo = "update_anular_compra";
         try {
             if (conn.getAutoCommit()) {
                 conn.setAutoCommit(false);
             }
-            com_dao.update_estado_compra(conn, comp);
-            cdao.anular_caja_detalle(conn, caja);
+            com_dao.update_estado_compra1(conn, comp);
+            cdao.anular_caja_detalle1(conn, caja);
             icdao.descontar_stock_producto(conn, comp);
             conn.commit();
         } catch (SQLException e) {

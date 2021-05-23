@@ -40,7 +40,7 @@ public class DAO_gasto {
             + " WHERE indice=?;";
     private String sql_anular = "UPDATE public.gasto\n"
             + "   SET estado=?\n"
-            + " WHERE indice=?;";
+            + " WHERE idgasto=?;";
     private String sql_select = "select g.idgasto,g.indice,to_char(g.fecha_emision,'yyyy-MM-dd HH24:MI') as fecha,\n"
             + "g.descripcion,gt.nombre as tipo,\n"
             + "TRIM(to_char(g.monto_gasto,'999G999G999')) AS monto,\n"
@@ -125,13 +125,13 @@ public class DAO_gasto {
             evemen.mensaje_error(e, sql_update + "\n" + gas.toString(), titulo);
         }
     }
-    public void update_gasto_anular(Connection conn, gasto gas) {
+    public void update_gasto_anular1(Connection conn, gasto gas) {
         String titulo = "update_gasto_anular";
         PreparedStatement pst = null;
         try {
             pst = conn.prepareStatement(sql_anular);
             pst.setString(1, gas.getEstado());
-            pst.setString(2, gas.getIndice());
+            pst.setInt(2, gas.getIdgasto());
             pst.execute();
             pst.close();
             evemen.Imprimir_serial_sql(sql_anular + "\n" + gas.toString(), titulo);
